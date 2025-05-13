@@ -15,7 +15,7 @@ database = []
 with open("Database.csv", 'r') as file:
     reader = csv.reader(file)
     for row in reader:
-        database.append(row[1])
+        database.append(row[2])
         
 #initialize pre-trained embedding model
 pre_trained_embedded = SentenceTransformer('jinaai/jina-embeddings-v2-base-en', trust_remote_code = True)
@@ -41,11 +41,9 @@ for question in querries:
     
     #run RAG pre-trained model
     response_1 = base_RAG.run(question)
-    print(f"{question}: {response_1}")
 
     #run RAG fine-tuned model
     response_2 = fine_tuned_RAG.run(question)
-    print(f"{question}: {response_2}")
 
     #run language model
     response = openai.ChatCompletion.create(
@@ -54,7 +52,6 @@ for question in querries:
         max_tokens = 300
     )
     response_3 = response["choices"][0]["message"]["content"].strip()
-    print(f"{question}: {response_3}")
 
     #save each of the outputs from the frameworks to the container
     output.append([question, response_1, response_2, response_3])
